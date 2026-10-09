@@ -1,17 +1,18 @@
-# Velkan Sector Tool engineering ledger. Schema: studio repository-roadmap v1 (~/Stuff/.portfolio/templates/repository-roadmap.yaml). Created 2026-10-09 by the studio lane (GOV-S2.3d).
-# Mode: MARKETING-ONLY (cleanup plan F9 / C12; mode lives on the card, not here). Maintenance and deployment verification only; no feature expansion.
-# Public repository: this ledger contains no private strategy or credentials.
+# Velkan Sector Tool engineering ledger, in the studio roadmap schema (v1). Created 2026-10-09 by the studio lane.
+# Mode: MARKETING-ONLY (mode lives on the project card, not here). Maintenance and deployment verification only; no feature expansion.
+# Card: one studio/site card covers this repository and velkan-holdings/velkan-website (provisional id velkan-studio-site).
+# Public repository: this ledger contains no private strategy, private paths or credentials.
 schema_version: 1
-project_id: velkan-sector-tool
+project_id: velkan-studio-site
 repository: velkan-holdings/velkan-sector-tool
 trust_boundary: Public repository holding a single static HTML page (index.html), deployed to Cloudflare Pages project velkan-sector-tool by Direct Upload.
-current_outcome: The published page is served from Cloudflare Pages and every repository pointer to its host and deployment agrees with the README.
+current_outcome: The published page is served from Cloudflare Pages and the README's deployment procedure matches how the studio deploys it.
 wip_limit: 1
 
 releases:
   - id: R1
     title: Host pointer and deployment hygiene
-    outcome: Host documentation agrees across README and workspace pointers, and deployment uses a scoped credential.
+    outcome: The README documents the live host and a deployment procedure that needs no broad credential.
 
 work_packages:
   - id: SECT-R1.1
@@ -20,8 +21,8 @@ work_packages:
     outcome: The README is the single owner of deployment facts and matches the live host.
     sizing: decomposed
     admission:
-      rationale: Plan decision D7 found the workspace map and README disagreeing on host (GitHub Pages versus Cloudflare); a deployment pointer must be correct before any further work.
-      evidence: Plan 2026-10-08 D7 and F9; commit e64dc7e documents Cloudflare Pages deployment; GitHub has_pages=false.
+      rationale: The host had been recorded inconsistently (GitHub Pages versus Cloudflare); a deployment pointer must be correct before any further work, and the README still names a broad credential.
+      evidence: Commit e64dc7e documents Cloudflare Pages deployment; GitHub has_pages=false; README Deployment section names the broad 1Password item "Cloudflare".
     slices:
       - id: SECT-R1.1a
         title: README documents Cloudflare Pages deployment
@@ -38,52 +39,46 @@ work_packages:
         evidence:
           commit: e64dc7e03d9c13471149d256ad51ae7b34e7c1b9
           deployment: null
-          verified_at: 2026-09-02
+          verified_at: "2026-10-09"
       - id: SECT-R1.1b
-        title: Confirm workspace pointers agree with the README
-        outcome: Recorded check that the Stuff WORKSPACE-MAP entry and this README both name Cloudflare Pages Direct Upload, closing D7 for this repository.
-        status: ready
+        title: Confirm the live host matches the README
+        outcome: Recorded check that the page is served by Cloudflare Pages and GitHub Pages is disabled, as the README states.
+        status: verified
         depends_on: [SECT-R1.1a]
         acceptance:
-          - WORKSPACE-MAP.md entry for velkan-sector-tool names Cloudflare Pages and not GitHub Pages (observed 2026-10-09 to already do so).
-          - gh api repos/velkan-holdings/velkan-sector-tool --jq .has_pages returns false.
+          - https://velkan-sector-tool.pages.dev/ returns 200 (observed 2026-10-09).
+          - gh api repos/velkan-holdings/velkan-sector-tool --jq .has_pages returns false (observed 2026-10-09).
         verify:
-          - grep -n "velkan-sector-tool" ~/Stuff/WORKSPACE-MAP.md
-          - gh api repos/velkan-holdings/velkan-sector-tool --jq .has_pages
           - curl -s -o /dev/null -w '%{http_code}' https://velkan-sector-tool.pages.dev/
+          - gh api repos/velkan-holdings/velkan-sector-tool --jq .has_pages
+        delivery: documentation
+        blocker: null
+        evidence:
+          commit: e64dc7e03d9c13471149d256ad51ae7b34e7c1b9
+          deployment: https://velkan-sector-tool.pages.dev/
+          verified_at: "2026-10-09"
+      - id: SECT-R1.1c
+        title: Replace the broad 1Password `Cloudflare` deploy instruction with a plugin-based Direct Upload procedure
+        outcome: README deployment steps describe a Direct Upload of index.html performed through the authenticated Cloudflare plugin, with no instruction to read the broad 1Password item "Cloudflare" or to export a token.
+        status: ready
+        depends_on: [SECT-R1.1b]
+        acceptance:
+          - README no longer instructs reading the 1Password item "Cloudflare" or setting CLOUDFLARE_API_TOKEN from it.
+          - The replacement procedure deploys index.html only to Pages project velkan-sector-tool, branch main, through the authenticated Cloudflare plugin, and records the commit hash.
+          - No project token, Keychain enrollment or local wrangler login is required by the README.
+        verify:
+          - "! grep -n 'Employee-vault item `Cloudflare`' README.md"
+          - "! grep -n 'CLOUDFLARE_API_TOKEN' README.md"
         delivery: documentation
         blocker: null
         evidence:
           commit: null
           deployment: null
           verified_at: null
-      - id: SECT-R1.1c
-        title: Remove the broad Cloudflare credential instruction from the README
-        outcome: README deployment steps name the scoped Pages credential path in place of the broad 1Password item "Cloudflare".
-        status: blocked
-        depends_on: [SECT-R1.1b]
-        acceptance:
-          - README no longer instructs reading the broad "Cloudflare" item.
-          - The replacement instruction names an existing Pages-scoped credential item.
-        verify:
-          - grep -n "Cloudflare" README.md
-          - Read CREDENTIALS.md and CLOUDFLARE-CREDENTIALS.md in ~/Stuff and confirm the README conforms.
-        delivery: documentation
-        blocker: OWNER-1
-        evidence:
-          commit: null
-          deployment: null
-          verified_at: null
 
 owner_actions:
-  - id: OWNER-1
-    action: Provision a Pages-scoped Cloudflare token item for velkan-sector-tool (as already done for velkan-website). Recommendation - approve, since the README's own text warns against reusing a broad credential and CLOUDFLARE-CREDENTIALS.md governs custody.
-    owner: Pedro
-    status: open
-    blocks: [SECT-R1.1c]
-    evidence: null
   - id: OWNER-2
-    action: Create the Velkan studio card (plan C12, MARKETING-ONLY) so this ledger has a registry entry. Recommendation - approve C12 and set mode MARKETING-ONLY.
+    action: Approve the single Velkan studio/site card (MARKETING-ONLY) covering this repository and velkan-website, so both ledgers share one registry entry (provisional id velkan-studio-site). Recommendation - approve with that id and mode MARKETING-ONLY.
     owner: Pedro
     status: open
     blocks: []
